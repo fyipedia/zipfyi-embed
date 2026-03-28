@@ -1,28 +1,691 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZipFYI Embed Widget — ZIP Codes Widgets for Any Website</title>
-  <meta name="description" content="Embed ZipFYI zip codes widgets on any website. Zero dependencies, Shadow DOM isolation.">
+  <meta name="description" content="Embed ZipFYI ZIP Codes widgets on any website. Zero dependencies, Shadow DOM, 4 themes, 2 styles. Free CDN via jsDelivr.">
+  <meta name="theme-color" content="#EA580C">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="ZipFYI Embed Widget — ZIP Codes for Any Website">
+  <meta property="og:description" content="Add ZipFYI geographic widgets, glossary terms, interactive tools, and inline elements to any website in one line of HTML.">
+  <meta property="og:url" content="https://widget.zipfyi.com">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://zipfyi.com/static/og/homepage.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="ZipFYI">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ZipFYI Embed Widget">
+  <meta name="twitter:description" content="Add ZipFYI ZIP Codes widgets to any website in one line of HTML. Zero dependencies, Shadow DOM.">
+  <meta name="twitter:image" content="https://zipfyi.com/static/og/homepage.png">
+
+  <!-- Canonical + SEO -->
+  <link rel="canonical" href="https://widget.zipfyi.com">
+  <meta name="author" content="FYIPedia">
+  <meta name="robots" content="index, follow">
+
+  <!-- Favicon -->
+  <link rel="icon" href="https://zipfyi.com/static/favicon.ico" sizes="32x32">
+  <link rel="icon" href="https://zipfyi.com/static/icon.svg" type="image/svg+xml">
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch" href="https://zipfyi.com">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"ZipFYI Embed Widget","url":"https://widget.zipfyi.com","applicationCategory":"DeveloperApplication","operatingSystem":"Web","description":"Embed ZipFYI ZIP Codes widgets on any website. Zero dependencies, Shadow DOM isolation, 4 themes.","publisher":{"@type":"Organization","name":"FYIPedia","url":"https://fyipedia.com"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ZipFYI","item":"https://zipfyi.com"},{"@type":"ListItem","position":2,"name":"Widget Docs"}]},{"@type":"SoftwareSourceCode","name":"zipfyi-embed","codeRepository":"https://github.com/fyipedia/zipfyi-embed","programmingLanguage":"TypeScript","runtimePlatform":"Browser","license":"https://opensource.org/licenses/MIT"}]}
+  </script>
+
+  <!-- Geist Sans for body, JetBrains Mono for code -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { accent: '#EA580C' },
+          fontFamily: {
+            mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Dark mode FOUC prevention -->
+  <script>
+    (function(){
+      var t = localStorage.getItem('theme');
+      if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      }
+    })();
+  </script>
+
+  <!-- Alpine.js CDN -->
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/cdn.min.js"></script>
+
+  <!-- Embed script via jsDelivr -->
+  <script src="https://cdn.jsdelivr.net/npm/zipfyi-embed@1/dist/embed.min.js"></script>
+
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; color: #1a1a1a; }
-    h1 { color: #EA580C; }
-    pre { background: #f5f5f5; padding: 1rem; border-radius: 8px; overflow-x: auto; }
-    .badge { display: inline-block; background: #EA580C; color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.875rem; text-decoration: none; margin-right: 0.5rem; }
+    [x-cloak]{display:none!important}
+    :root{--accent:#EA580C} .accent-text{color:var(--accent)} .accent-bg{background-color:var(--accent)} .accent-border{border-color:var(--accent)}
+    pre{tab-size:2;margin:0}
+    .code-block-wrapper{position:relative;margin-bottom:1rem}
+    .code-lang-badge{position:absolute;top:0;left:12px;transform:translateY(-50%);background:#1e293b;color:#94a3b8;font-family:'JetBrains Mono','Fira Code',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.05em;z-index:1}
+    .code-copy-btn{position:absolute;top:8px;right:8px;background:#334155;color:#94a3b8;border:none;padding:4px 10px;border-radius:4px;font-size:11px;font-family:'JetBrains Mono','Fira Code',monospace;cursor:pointer;transition:background .15s;z-index:1}
+    .code-copy-btn:hover{background:#475569}
+    .code-block{background:#0f172a;color:#e2e8f0;border-radius:8px;padding:1.25rem 1.25rem 1rem;font-size:13px;line-height:1.7;overflow-x:auto;font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;-webkit-font-smoothing:antialiased}
+    .hl-tag{color:#7dd3fc} .hl-attr{color:#86efac} .hl-val{color:#fde68a} .hl-comment{color:#475569;font-style:italic} .hl-str{color:#fda4af} .hl-kw{color:#c4b5fd} .hl-num{color:#fdba74} .hl-fn{color:#67e8f9} .hl-punct{color:#94a3b8}
+    .mock-card{border-radius:8px;overflow:hidden;font-size:11px;line-height:1.5}
+    .mock-card .mc-foot{font-size:9px;color:#9ca3af;border-top:1px solid #f3f4f6;padding-top:6px;margin-top:8px}
+    .dark .mock-card .mc-foot{border-color:#374151;color:#6b7280}
+    .mock-card .mc-foot a{font-size:9px}
+    .ws-btn{padding:6px 14px;border-radius:9999px;font-size:12px;font-weight:500;border:1px solid #e2e8f0;background:#fff;color:#64748b;cursor:pointer;transition:all .15s;font-family:'JetBrains Mono','Fira Code',monospace}
+    .ws-btn:hover{border-color:#cbd5e1;color:#334155}
+    .ws-btn.active{background:#EA580C;color:#fff;border-color:#EA580C}
+    .dark .ws-btn{background:#1e293b;border-color:#334151;color:#94a3b8}
+    .dark .ws-btn:hover{border-color:#4b5563;color:#e2e8f0}
+    .dark .ws-btn.active{background:#EA580C;color:#fff;border-color:#EA580C}
+    .geo-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:9999px;font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace}
+    .elev-bar{height:6px;border-radius:3px;background:#EA580C;opacity:0.8}
   </style>
 </head>
-<body>
-  <h1>ZipFYI Embed Widget</h1>
-  <p>
-    <a class="badge" href="https://www.npmjs.com/package/zipfyi-embed">npm</a>
-    <a class="badge" href="https://github.com/fyipedia/zipfyi-embed">GitHub</a>
-    <a class="badge" href="https://zipfyi.com">Visit ZipFYI</a>
-  </p>
-  <p>Embed ZipFYI zip codes widgets on any website. Zero dependencies, Shadow DOM style isolation, 4 themes, 2 styles.</p>
-  <h2>Quick Start</h2>
-  <pre><code>&lt;div data-zipfyi="entity" data-slug="postal-codes" data-theme="light"&gt;&lt;/div&gt;
-&lt;script src="https://cdn.jsdelivr.net/npm/zipfyi-embed@1/dist/embed.min.js"&gt;&lt;/script&gt;</code></pre>
-  <script src="https://cdn.jsdelivr.net/npm/zipfyi-embed@1/dist/embed.min.js"></script>
+<body class="bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100" x-data="{ mobileMenuOpen: false }">
+
+  <!-- HEADER -->
+  <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+      <a href="https://zipfyi.com" class="flex items-center gap-2 font-bold text-lg font-mono" style="color: #EA580C">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>ZipFYI</span>
+        <span class="text-xs font-normal text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full font-sans">Embed</span>
+      </a>
+      <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-600 dark:text-slate-400">
+        <a href="#quick-start" class="hover:text-slate-900 dark:hover:text-slate-100">Quick Start</a>
+        <a href="#widgets" class="hover:text-slate-900 dark:hover:text-slate-100">Widgets</a>
+        <a href="#options" class="hover:text-slate-900 dark:hover:text-slate-100">Options</a>
+        <a href="#styles" class="hover:text-slate-900 dark:hover:text-slate-100">Styles</a>
+        <a href="#cdn" class="hover:text-slate-900 dark:hover:text-slate-100">CDN</a>
+        <button x-data="{ dark: document.documentElement.classList.contains('dark') }"
+                @click="dark = !dark; localStorage.setItem('theme', dark ? 'dark' : 'light'); document.documentElement.classList.toggle('dark', dark)"
+                class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400" aria-label="Toggle dark mode">
+          <svg x-show="!dark" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg x-show="dark" x-cloak class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+        <a href="https://zipfyi.com" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-md text-white text-sm font-medium" style="background: #EA580C">Visit ZipFYI &rarr;</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 py-16 sm:py-24">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <div class="inline-flex items-center gap-2 text-sm font-medium px-3 py-1 rounded-full mb-6 font-mono" style="background: color-mix(in srgb, #EA580C 10%, white); color: #EA580C">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Zero Dependencies &middot; Shadow DOM &middot; 4 Themes &middot; Live Geo Data
+        </div>
+        <h1 class="text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-4">
+          Embed <span style="color: #EA580C">ZIP Codes</span><br>on Any Website
+        </h1>
+        <p class="text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+          Add ZipFYI entity cards, glossary terms, interactive tools, and inline badges to any website with a single line of HTML. No build tools. No dependencies. Live geographic data from the ZipFYI database.
+        </p>
+        <div class="flex flex-wrap gap-3 mb-8">
+          <a href="#quick-start" class="px-5 py-2.5 rounded-lg text-white font-medium text-sm" style="background: #EA580C">Get Started</a>
+          <a href="https://github.com/fyipedia/zipfyi-embed" target="_blank" rel="noopener" class="px-5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700">GitHub &rarr;</a>
+          <a href="https://www.npmjs.com/package/zipfyi-embed" target="_blank" rel="noopener" class="px-5 py-2.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium text-sm bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700">npm &rarr;</a>
+        </div>
+        <div class="code-block-wrapper" x-data="{ copied: false }">
+          <div class="code-lang-badge">HTML</div>
+          <button @click="navigator.clipboard?.writeText($refs.heroCode.textContent); copied = true; setTimeout(() => copied = false, 2000)" class="code-copy-btn" x-text="copied ? '&#x2713;' : 'Copy'"></button>
+          <div class="code-block text-xs sm:text-sm" x-ref="heroCode"><span class="hl-comment">&lt;!-- 1. Place the widget div --&gt;</span><br><span class="hl-tag">&lt;div</span> <span class="hl-attr">data-zipfyi</span>=<span class="hl-val">"entity"</span> <span class="hl-attr">data-slug</span>=<span class="hl-val">"postal-codes"</span><span class="hl-tag">&gt;&lt;/div&gt;</span><br><br><span class="hl-comment">&lt;!-- 2. Add the script once --&gt;</span><br><span class="hl-tag">&lt;script</span> <span class="hl-attr">src</span>=<span class="hl-val">"https://cdn.jsdelivr.net/npm/zipfyi-embed@1/dist/embed.min.js"</span><span class="hl-tag">&gt;&lt;/script&gt;</span></div>
+        </div>
+      </div>
+      <!-- Hero mock widget preview -->
+      <div class="flex justify-center">
+        <div class="w-full max-w-sm">
+          <p class="text-xs text-slate-400 text-center uppercase tracking-wider font-medium mb-3 font-mono">Entity Card Preview</p>
+          <div class="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden bg-white dark:bg-slate-900 shadow-sm font-mono">
+            <div class="h-1.5" style="background:#EA580C"></div>
+            <div class="p-4">
+              <div class="flex items-center justify-between mb-2">
+                <div>
+                  <span class="font-bold text-sm text-slate-900 dark:text-white">ZIP Codes</span>
+                  <span class="ml-2 geo-badge" style="background: color-mix(in srgb, #EA580C 12%, white); color: #EA580C">Live</span>
+                </div>
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064"/></svg>
+              </div>
+              <div class="space-y-1.5 text-xs mb-3">
+                <div class="flex justify-between"><span class="text-slate-400">Name</span><span class="font-medium text-slate-700 dark:text-slate-300">Example Location</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Region</span><span class="font-medium text-slate-700 dark:text-slate-300">Global</span></div>
+                <div class="flex justify-between"><span class="text-slate-400">Data</span><span class="font-medium" style="color:#EA580C">Live from ZipFYI</span></div>
+              </div>
+              <div style="font-size:9px;color:#94a3b8;border-top:1px solid #f1f5f9;padding-top:8px">
+                <a href="https://zipfyi.com" style="color:#EA580C;text-decoration:none" target="_blank" rel="noopener">Powered by ZipFYI</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUICK START -->
+  <section id="quick-start" class="py-16 sm:py-20 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">Quick Start</h2>
+        <p class="text-slate-600 dark:text-slate-400">Two lines of HTML. That's all it takes.</p>
+      </div>
+      <div class="max-w-3xl mx-auto">
+        <div class="code-block-wrapper" x-data="{ copied: false }">
+          <div class="code-lang-badge">HTML</div>
+          <script type="text/plain" id="quick-start-snippet"><!-- Place widget divs where you want them -->
+<div data-zipfyi="entity" data-slug="postal-codes" data-theme="light"></div>
+<div data-zipfyi="glossary" data-slug="example-term"></div>
+<div data-zipfyi="search" data-placeholder="Search ZIP Codes..."></div>
+
+<!-- Load script once, anywhere on the page -->
+<script src="https://cdn.jsdelivr.net/npm/zipfyi-embed@1/dist/embed.min.js"></script></script>
+          <button @click="navigator.clipboard?.writeText(document.getElementById('quick-start-snippet').textContent); copied = true; setTimeout(() => copied = false, 2000)" class="code-copy-btn" x-text="copied ? '&#x2713; Copied!' : 'Copy'"></button>
+          <div class="code-block text-sm leading-relaxed">
+<span class="hl-comment">&lt;!-- Step 1: Place widget divs anywhere on your page --&gt;</span><br>
+<span class="hl-tag">&lt;div</span> <span class="hl-attr">data-zipfyi</span>=<span class="hl-val">"entity"</span> <span class="hl-attr">data-slug</span>=<span class="hl-val">"postal-codes"</span> <span class="hl-attr">data-theme</span>=<span class="hl-val">"light"</span><span class="hl-tag">&gt;&lt;/div&gt;</span><br>
+<span class="hl-tag">&lt;div</span> <span class="hl-attr">data-zipfyi</span>=<span class="hl-val">"glossary"</span> <span class="hl-attr">data-slug</span>=<span class="hl-val">"example-term"</span><span class="hl-tag">&gt;&lt;/div&gt;</span><br>
+<span class="hl-tag">&lt;div</span> <span class="hl-attr">data-zipfyi</span>=<span class="hl-val">"search"</span> <span class="hl-attr">data-placeholder</span>=<span class="hl-val">"Search ZIP Codes..."</span><span class="hl-tag">&gt;&lt;/div&gt;</span><br><br>
+<span class="hl-comment">&lt;!-- Step 2: Load the embed script once, anywhere --&gt;</span><br>
+<span class="hl-tag">&lt;script</span> <span class="hl-attr">src</span>=<span class="hl-val">"https://cdn.jsdelivr.net/npm/zipfyi-embed@1/dist/embed.min.js"</span><span class="hl-tag">&gt;&lt;/script&gt;</span>
+          </div>
+        </div>
+        <div class="mt-6 grid sm:grid-cols-3 gap-3 text-sm">
+          <div class="flex items-start gap-2 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl"><span>&#x1f30d;</span><div><div class="font-semibold text-slate-900 dark:text-white text-xs">Live Geo Data</div><div class="text-slate-500 dark:text-slate-400 text-[10px]">Direct from the ZipFYI database.</div></div></div>
+          <div class="flex items-start gap-2 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl"><span>&#x26a1;</span><div><div class="font-semibold text-slate-900 dark:text-white text-xs">Zero Dependencies</div><div class="text-slate-500 dark:text-slate-400 text-[10px]">No jQuery, React. Tiny bundle.</div></div></div>
+          <div class="flex items-start gap-2 p-3 bg-slate-50 dark:bg-slate-800 rounded-xl"><span>&#x1f512;</span><div><div class="font-semibold text-slate-900 dark:text-white text-xs">Shadow DOM Isolation</div><div class="text-slate-500 dark:text-slate-400 text-[10px]">No CSS conflicts with your site.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WIDGET GALLERY -->
+  <section id="widgets" class="py-16 sm:py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6" x-data="{ activeWidget: 'entity' }">
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">Widget Types &times; 2 Styles &times; 3 Themes</h2>
+        <p class="text-slate-600 dark:text-slate-400 mb-6">Select a widget type to see both design styles in Light and Dark. Every widget includes Shadow DOM isolation and a "Powered by ZipFYI" backlink.</p>
+      </div>
+
+      <!-- Widget type selector -->
+      <div class="flex flex-wrap gap-2 justify-center mb-8">
+        <template x-for="w in ['entity','glossary','faq','search']">
+          <button @click="activeWidget = w" :class="activeWidget === w ? 'active' : ''" class="ws-btn" x-text="w"></button>
+        </template>
+      </div>
+
+      <!-- 2-column style display -->
+      <div class="grid sm:grid-cols-2 gap-6">
+
+        <!-- ENTITY -->
+        <template x-if="activeWidget==='entity'">
+          <div>
+            <div class="text-center mb-2"><span class="text-xs font-medium px-3 py-1 rounded-full inline-block font-mono" style="background: color-mix(in srgb, #EA580C 10%, white); color: #EA580C">Modern</span></div>
+            <div class="mb-3">
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Light</div>
+              <div class="mock-card border border-slate-200 bg-white shadow-sm font-mono">
+                <div class="h-1.5" style="background:#EA580C"></div>
+                <div class="p-3">
+                  <div class="flex items-center justify-between mb-2"><span class="font-bold text-xs text-slate-900">ZIP Codes</span><span class="geo-badge text-[9px]" style="background: color-mix(in srgb, #EA580C 12%, white); color: #EA580C">Live</span></div>
+                  <div class="space-y-1 text-[10px] mb-2">
+                    <div class="flex justify-between"><span class="text-slate-400">Name</span><span class="font-medium">Example Location</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">Region</span><span class="font-medium">Global</span></div>
+                    <div class="flex justify-between"><span class="text-slate-400">Data</span><span class="font-medium" style="color:#EA580C">Live</span></div>
+                  </div>
+                  <div class="mc-foot"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Dark</div>
+              <div class="mock-card border border-slate-700 bg-[#0f172a] text-slate-100 font-mono">
+                <div class="h-1.5" style="background:#EA580C"></div>
+                <div class="p-3">
+                  <div class="flex items-center justify-between mb-2"><span class="font-bold text-xs text-slate-100">ZIP Codes</span><span class="geo-badge text-[9px]" style="background: color-mix(in srgb, #EA580C 18%, #0f172a); color: #EA580C">Live</span></div>
+                  <div class="space-y-1 text-[10px] mb-2">
+                    <div class="flex justify-between"><span class="text-slate-500">Name</span><span class="font-medium text-slate-300">Example Location</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">Region</span><span class="font-medium text-slate-300">Global</span></div>
+                    <div class="flex justify-between"><span class="text-slate-500">Data</span><span class="font-medium" style="color:#EA580C">Live</span></div>
+                  </div>
+                  <div style="font-size:9px;color:#64748b;border-top:1px solid #1e293b;padding-top:6px;margin-top:8px"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template x-if="activeWidget==='entity'">
+          <div>
+            <div class="text-center mb-2"><span class="text-xs font-medium px-3 py-1 rounded-full inline-block bg-slate-100 text-slate-700">Clean</span></div>
+            <div class="mb-3">
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Light</div>
+              <div class="mock-card border border-slate-200 bg-white shadow-sm">
+                <div class="p-3">
+                  <div class="flex items-center gap-2 mb-2"><div class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-bold" style="background:#EA580C"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945"/></svg></div><span class="font-semibold text-xs text-slate-900">ZIP Codes</span></div>
+                  <p class="text-[10px] text-slate-500 mb-2">Geographic entity with live data from the ZipFYI database.</p>
+                  <div class="mc-foot"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Dark</div>
+              <div class="mock-card border border-slate-700 bg-[#0f172a] text-slate-100">
+                <div class="p-3">
+                  <div class="flex items-center gap-2 mb-2"><div class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[10px] font-bold" style="background:#EA580C"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945"/></svg></div><span class="font-semibold text-xs text-slate-100">ZIP Codes</span></div>
+                  <p class="text-[10px] text-slate-400 mb-2">Geographic entity with live data from the ZipFYI database.</p>
+                  <div style="font-size:9px;color:#64748b;border-top:1px solid #1e293b;padding-top:6px;margin-top:8px"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- GLOSSARY -->
+        <template x-if="activeWidget==='glossary'">
+          <div>
+            <div class="text-center mb-2"><span class="text-xs font-medium px-3 py-1 rounded-full inline-block font-mono" style="background: color-mix(in srgb, #EA580C 10%, white); color: #EA580C">Modern</span></div>
+            <div class="mb-3">
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Light</div>
+              <div class="mock-card border border-slate-200 bg-white shadow-sm font-mono p-3">
+                <div class="text-[9px] text-slate-400 uppercase tracking-wider mb-1">TERM</div>
+                <div class="font-bold text-xs text-slate-900 mb-1" style="color:#EA580C">Geographic Term</div>
+                <p class="text-[10px] text-slate-600 mb-2">Definition of the geographic term with relevant context and cross-references to related concepts.</p>
+                <div class="mc-foot"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Dark</div>
+              <div class="mock-card border border-slate-700 bg-[#0f172a] text-slate-100 font-mono p-3">
+                <div class="text-[9px] text-slate-500 uppercase tracking-wider mb-1">TERM</div>
+                <div class="font-bold text-xs mb-1" style="color:#EA580C">Geographic Term</div>
+                <p class="text-[10px] text-slate-400 mb-2">Definition of the geographic term with relevant context and cross-references.</p>
+                <div style="font-size:9px;color:#64748b;border-top:1px solid #1e293b;padding-top:6px;margin-top:8px"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template x-if="activeWidget==='glossary'">
+          <div>
+            <div class="text-center mb-2"><span class="text-xs font-medium px-3 py-1 rounded-full inline-block bg-slate-100 text-slate-700">Clean</span></div>
+            <div class="mb-3">
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Light</div>
+              <div class="mock-card border-l-2 border-slate-200 bg-slate-50 p-3" style="border-left-color:#EA580C">
+                <div class="font-semibold text-xs text-slate-900 mb-1">Geographic Term</div>
+                <p class="text-[10px] text-slate-500 mb-2">Definition with geographic context and related concepts from the ZipFYI glossary.</p>
+                <div class="mc-foot"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Dark</div>
+              <div class="mock-card border-l-2 bg-[#0f172a] p-3" style="border-left-color:#EA580C">
+                <div class="font-semibold text-xs text-slate-100 mb-1">Geographic Term</div>
+                <p class="text-[10px] text-slate-400 mb-2">Definition with geographic context and related concepts from the ZipFYI glossary.</p>
+                <div style="font-size:9px;color:#64748b;border-top:1px solid #1e293b;padding-top:6px;margin-top:8px"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- FAQ -->
+        <template x-if="activeWidget==='faq'">
+          <div>
+            <div class="text-center mb-2"><span class="text-xs font-medium px-3 py-1 rounded-full inline-block font-mono" style="background: color-mix(in srgb, #EA580C 10%, white); color: #EA580C">Modern</span></div>
+            <div class="mb-3">
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Light</div>
+              <div class="mock-card border border-slate-200 bg-white shadow-sm p-3">
+                <details class="mb-1"><summary class="text-[10px] font-medium text-slate-700 cursor-pointer">What is ZIP Codes?</summary><p class="text-[9px] text-slate-500 mt-1 ml-3">Answer about ZIP Codes from the ZipFYI FAQ database.</p></details>
+                <details><summary class="text-[10px] font-medium text-slate-700 cursor-pointer">How is the data sourced?</summary><p class="text-[9px] text-slate-500 mt-1 ml-3">Data comes directly from authoritative geographic sources.</p></details>
+                <div class="mc-foot mt-2"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Dark</div>
+              <div class="mock-card border border-slate-700 bg-[#0f172a] text-slate-100 p-3">
+                <details class="mb-1"><summary class="text-[10px] font-medium text-slate-300 cursor-pointer">What is ZIP Codes?</summary><p class="text-[9px] text-slate-500 mt-1 ml-3">Answer from the ZipFYI FAQ database.</p></details>
+                <details><summary class="text-[10px] font-medium text-slate-300 cursor-pointer">How is the data sourced?</summary><p class="text-[9px] text-slate-500 mt-1 ml-3">Data from authoritative geographic sources.</p></details>
+                <div style="font-size:9px;color:#64748b;border-top:1px solid #1e293b;padding-top:6px;margin-top:8px"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template x-if="activeWidget==='faq'">
+          <div>
+            <div class="text-center mb-2"><span class="text-xs font-medium px-3 py-1 rounded-full inline-block bg-slate-100 text-slate-700">Clean</span></div>
+            <div class="mb-3">
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Light</div>
+              <div class="mock-card bg-white border border-slate-200 p-3 space-y-1">
+                <div class="text-[9px] font-semibold uppercase tracking-wider text-slate-400 mb-1">FAQ</div>
+                <div class="text-[10px] text-slate-700 font-medium">Q: What is ZIP Codes?</div>
+                <div class="text-[9px] text-slate-500 pl-2">A: Detailed answer from the ZipFYI knowledge base.</div>
+                <div class="mc-foot mt-1"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Dark</div>
+              <div class="mock-card bg-[#0f172a] border border-slate-700 p-3 space-y-1">
+                <div class="text-[9px] font-semibold uppercase tracking-wider text-slate-500 mb-1">FAQ</div>
+                <div class="text-[10px] text-slate-300 font-medium">Q: What is ZIP Codes?</div>
+                <div class="text-[9px] text-slate-500 pl-2">A: Detailed answer from the ZipFYI knowledge base.</div>
+                <div style="font-size:9px;color:#64748b;border-top:1px solid #1e293b;padding-top:6px;margin-top:8px"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <!-- SEARCH -->
+        <template x-if="activeWidget==='search'">
+          <div>
+            <div class="text-center mb-2"><span class="text-xs font-medium px-3 py-1 rounded-full inline-block font-mono" style="background: color-mix(in srgb, #EA580C 10%, white); color: #EA580C">Modern</span></div>
+            <div class="mb-3">
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Light</div>
+              <div class="mock-card border border-slate-200 bg-white shadow-sm p-3">
+                <div class="flex items-center gap-2 border border-slate-200 rounded-lg px-2 py-1.5 mb-2">
+                  <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  <span class="text-[10px] text-slate-400 font-mono">Search ZIP Codes...</span>
+                </div>
+                <div class="mc-foot"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Dark</div>
+              <div class="mock-card border border-slate-700 bg-[#0f172a] p-3">
+                <div class="flex items-center gap-2 border border-slate-700 rounded-lg px-2 py-1.5 mb-2">
+                  <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  <span class="text-[10px] text-slate-500 font-mono">Search ZIP Codes...</span>
+                </div>
+                <div style="font-size:9px;color:#64748b;border-top:1px solid #1e293b;padding-top:6px;margin-top:8px"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template x-if="activeWidget==='search'">
+          <div>
+            <div class="text-center mb-2"><span class="text-xs font-medium px-3 py-1 rounded-full inline-block bg-slate-100 text-slate-700">Clean</span></div>
+            <div class="mb-3">
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Light</div>
+              <div class="mock-card border border-slate-200 bg-white p-3">
+                <div class="flex items-center gap-2 bg-slate-50 rounded px-2 py-1.5 mb-2">
+                  <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  <span class="text-[10px] text-slate-400">Search ZIP Codes...</span>
+                </div>
+                <div class="mc-foot"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400 mb-1 font-mono">Dark</div>
+              <div class="mock-card border border-slate-700 bg-[#0f172a] p-3">
+                <div class="flex items-center gap-2 bg-slate-800 rounded px-2 py-1.5 mb-2">
+                  <svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  <span class="text-[10px] text-slate-500">Search ZIP Codes...</span>
+                </div>
+                <div style="font-size:9px;color:#64748b;border-top:1px solid #1e293b;padding-top:6px;margin-top:8px"><a href="https://zipfyi.com" class="hover:underline" style="color:#EA580C">Powered by ZipFYI</a></div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- WIDGET OPTIONS -->
+  <section id="options" class="py-16 sm:py-20 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">Widget Options</h2>
+        <p class="text-slate-600 dark:text-slate-400">Configure each widget with <code class="font-mono text-sm bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">data-*</code> attributes.</p>
+      </div>
+      <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 dark:bg-slate-800">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 font-mono text-xs">Attribute</th>
+              <th class="px-4 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 text-xs">Values</th>
+              <th class="px-4 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 text-xs">Default</th>
+              <th class="px-4 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 text-xs">Description</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 font-mono text-xs" style="color:#EA580C">data-zipfyi</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">entity, glossary, faq, search</td><td class="px-4 py-3 text-xs text-slate-500">required</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Widget type to render</td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 font-mono text-xs text-slate-700 dark:text-slate-300">data-slug</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">e.g. "postal-codes"</td><td class="px-4 py-3 text-xs text-slate-500">&mdash;</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Entity slug from the ZipFYI database</td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 font-mono text-xs text-slate-700 dark:text-slate-300">data-theme</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">light, dark, sepia, auto</td><td class="px-4 py-3 text-xs text-slate-500">light</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Visual theme (<code class="font-mono">auto</code> follows OS preference)</td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 font-mono text-xs text-slate-700 dark:text-slate-300">data-style</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">modern, clean</td><td class="px-4 py-3 text-xs text-slate-500">modern</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Widget design style</td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 font-mono text-xs text-slate-700 dark:text-slate-300">data-size</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">default, compact, large</td><td class="px-4 py-3 text-xs text-slate-500">default</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Widget size</td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 font-mono text-xs text-slate-700 dark:text-slate-300">data-placeholder</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">any string</td><td class="px-4 py-3 text-xs text-slate-500">"Search..."</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Search box placeholder text</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- STYLES & THEMES -->
+  <section id="styles" class="py-16 sm:py-20 border-t border-slate-100 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">Styles &amp; Themes</h2>
+        <p class="text-slate-600 dark:text-slate-400">2 design styles &times; 4 themes = 8 combinations for any site.</p>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+          <div class="w-8 h-8 rounded-lg mb-3 flex items-center justify-center text-white" style="background:#EA580C"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3"/></svg></div>
+          <div class="font-semibold text-sm text-slate-900 dark:text-white mb-1">Light</div>
+          <p class="text-xs text-slate-500">Clean white background. Ideal for light-themed websites.</p>
+          <code class="text-xs font-mono mt-2 block" style="color:#EA580C">data-theme="light"</code>
+        </div>
+        <div class="p-4 rounded-xl border border-slate-700 bg-slate-900">
+          <div class="w-8 h-8 rounded-lg mb-3 flex items-center justify-center text-white" style="background:#EA580C"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646"/></svg></div>
+          <div class="font-semibold text-sm text-white mb-1">Dark</div>
+          <p class="text-xs text-slate-400">Deep slate background. Perfect for dark-mode websites.</p>
+          <code class="text-xs font-mono mt-2 block" style="color:#EA580C">data-theme="dark"</code>
+        </div>
+        <div class="p-4 rounded-xl border" style="background:#f5f0e8;border-color:#d4c5a9">
+          <div class="w-8 h-8 rounded-lg mb-3 flex items-center justify-center text-white" style="background:#EA580C"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"/></svg></div>
+          <div class="font-semibold text-sm mb-1" style="color:#3d3529">Sepia</div>
+          <p class="text-xs" style="color:#8b7d6b">Warm tone. Great for editorial and content-rich sites.</p>
+          <code class="text-xs font-mono mt-2 block" style="color:#EA580C">data-theme="sepia"</code>
+        </div>
+        <div class="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800">
+          <div class="w-8 h-8 rounded-lg mb-3 flex items-center justify-center text-white" style="background:#EA580C"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+          <div class="font-semibold text-sm text-slate-900 dark:text-white mb-1">Auto</div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Follows OS dark/light preference with live updates.</p>
+          <code class="text-xs font-mono mt-2 block" style="color:#EA580C">data-theme="auto"</code>
+        </div>
+      </div>
+
+      <!-- Code example for themes -->
+      <div class="max-w-2xl mx-auto">
+        <div class="code-block-wrapper" x-data="{ copied: false }">
+          <div class="code-lang-badge">HTML</div>
+          <button @click="navigator.clipboard?.writeText($refs.themesCode.textContent); copied = true; setTimeout(() => copied = false, 2000)" class="code-copy-btn" x-text="copied ? '&#x2713; Copied!' : 'Copy'"></button>
+          <div class="code-block text-sm" x-ref="themesCode">
+<span class="hl-comment">&lt;!-- Light (default) --&gt;</span><br>
+<span class="hl-tag">&lt;div</span> <span class="hl-attr">data-zipfyi</span>=<span class="hl-val">"entity"</span> <span class="hl-attr">data-slug</span>=<span class="hl-val">"postal-codes"</span> <span class="hl-attr">data-theme</span>=<span class="hl-val">"light"</span><span class="hl-tag">&gt;&lt;/div&gt;</span><br>
+<span class="hl-comment">&lt;!-- Dark --&gt;</span><br>
+<span class="hl-tag">&lt;div</span> <span class="hl-attr">data-zipfyi</span>=<span class="hl-val">"entity"</span> <span class="hl-attr">data-slug</span>=<span class="hl-val">"postal-codes"</span> <span class="hl-attr">data-theme</span>=<span class="hl-val">"dark"</span><span class="hl-tag">&gt;&lt;/div&gt;</span><br>
+<span class="hl-comment">&lt;!-- Sepia --&gt;</span><br>
+<span class="hl-tag">&lt;div</span> <span class="hl-attr">data-zipfyi</span>=<span class="hl-val">"entity"</span> <span class="hl-attr">data-slug</span>=<span class="hl-val">"postal-codes"</span> <span class="hl-attr">data-theme</span>=<span class="hl-val">"sepia"</span><span class="hl-tag">&gt;&lt;/div&gt;</span><br>
+<span class="hl-comment">&lt;!-- Auto — follows OS preference --&gt;</span><br>
+<span class="hl-tag">&lt;div</span> <span class="hl-attr">data-zipfyi</span>=<span class="hl-val">"entity"</span> <span class="hl-attr">data-slug</span>=<span class="hl-val">"postal-codes"</span> <span class="hl-attr">data-theme</span>=<span class="hl-val">"auto"</span><span class="hl-tag">&gt;&lt;/div&gt;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CDN OPTIONS -->
+  <section id="cdn" class="py-16 sm:py-20 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">CDN Options</h2>
+        <p class="text-slate-600 dark:text-slate-400">Multiple delivery options for production or development.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <!-- jsDelivr -->
+        <div class="p-5 rounded-xl border-2 border-slate-900 dark:border-white">
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-0.5 text-xs font-bold rounded text-white" style="background:#EA580C">Recommended</span>
+          </div>
+          <h3 class="font-bold text-slate-900 dark:text-white mb-2">jsDelivr</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Free global CDN. Auto-versioned. 110+ PoPs worldwide.</p>
+          <div class="code-block-wrapper" x-data="{ copied: false }">
+            <script type="text/plain" id="jsdelivr-snippet"><script src="https://cdn.jsdelivr.net/npm/zipfyi-embed@1/dist/embed.min.js"></script></script>
+            <button @click="navigator.clipboard?.writeText(document.getElementById('jsdelivr-snippet').textContent); copied = true; setTimeout(() => copied = false, 2000)" class="code-copy-btn" x-text="copied ? '&#x2713;' : 'Copy'"></button>
+            <div class="code-block text-xs">
+<span class="hl-tag">&lt;script</span> <span class="hl-attr">src</span>=<span class="hl-val">"https://cdn.jsdelivr.net/npm/zipfyi-embed@1/dist/embed.min.js"</span><span class="hl-tag">&gt;&lt;/script&gt;</span>
+            </div>
+          </div>
+        </div>
+        <!-- npm -->
+        <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+          <h3 class="font-bold text-slate-900 dark:text-white mb-2 mt-0.5">npm install</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Use as an ESM module in your build pipeline.</p>
+          <div class="code-block-wrapper" x-data="{ copied: false }">
+            <script type="text/plain" id="npm-snippet">npm install zipfyi-embed</script>
+            <button @click="navigator.clipboard?.writeText(document.getElementById('npm-snippet').textContent); copied = true; setTimeout(() => copied = false, 2000)" class="code-copy-btn" x-text="copied ? '&#x2713;' : 'Copy'"></button>
+            <div class="code-block text-xs">
+<span class="hl-kw">npm</span> install <span class="hl-str">zipfyi-embed</span>
+            </div>
+          </div>
+          <div class="code-block-wrapper mt-2" x-data="{ copied: false }">
+            <script type="text/plain" id="esm-snippet">import 'zipfyi-embed';</script>
+            <button @click="navigator.clipboard?.writeText(document.getElementById('esm-snippet').textContent); copied = true; setTimeout(() => copied = false, 2000)" class="code-copy-btn" x-text="copied ? '&#x2713;' : 'Copy'"></button>
+            <div class="code-block text-xs">
+<span class="hl-kw">import</span> <span class="hl-str">'zipfyi-embed'</span><span class="hl-punct">;</span>
+            </div>
+          </div>
+        </div>
+        <!-- Direct -->
+        <div class="p-5 rounded-xl border border-slate-200 dark:border-slate-700">
+          <h3 class="font-bold text-slate-900 dark:text-white mb-2 mt-0.5">Self-hosted</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mb-3">Download and serve from your own infrastructure.</p>
+          <div class="code-block-wrapper" x-data="{ copied: false }">
+            <script type="text/plain" id="self-snippet"><script src="/path/to/zipfyi-embed.min.js"></script></script>
+            <button @click="navigator.clipboard?.writeText(document.getElementById('self-snippet').textContent); copied = true; setTimeout(() => copied = false, 2000)" class="code-copy-btn" x-text="copied ? '&#x2713;' : 'Copy'"></button>
+            <div class="code-block text-xs">
+<span class="hl-comment">&lt;!-- Download from npm --&gt;</span><br>
+<span class="hl-tag">&lt;script</span> <span class="hl-attr">src</span>=<span class="hl-val">"/path/to/zipfyi-embed.min.js"</span><span class="hl-tag">&gt;&lt;/script&gt;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GEO FYI FAMILY NETWORK -->
+  <section id="family" class="py-16 sm:py-20 border-t border-slate-100 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">Geo FYI Family</h2>
+        <p class="text-slate-600 dark:text-slate-400">Part of the <a href="https://fyipedia.com" class="hover:underline font-medium" style="color:#EA580C">FYIPedia</a> open-source developer tools ecosystem.</p>
+      </div>
+      <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 dark:bg-slate-800">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 text-xs">Site</th>
+              <th class="px-4 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 text-xs">Domain</th>
+              <th class="px-4 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 text-xs">Focus</th>
+              <th class="px-4 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 text-xs">Embed</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-xs font-medium text-slate-900 dark:text-white">DistanceFYI</td><td class="px-4 py-3 text-xs"><a href="https://distancefyi.com" target="_blank" rel="noopener" class="hover:underline" style="color:#EA580C">distancefyi.com</a></td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">33,336 cities, Haversine distance, travel times</td><td class="px-4 py-3 text-xs font-mono"><a href="https://www.npmjs.com/package/distancefyi-embed" target="_blank" rel="noopener" class="hover:underline" style="color:#EA580C">distancefyi-embed</a></td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-xs font-medium text-slate-900 dark:text-white">MountainFYI</td><td class="px-4 py-3 text-xs"><a href="https://mountainfyi.com" target="_blank" rel="noopener" class="hover:underline" style="color:#57534E">mountainfyi.com</a></td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">2,000 mountains, elevation, difficulty grades</td><td class="px-4 py-3 text-xs font-mono"><a href="https://www.npmjs.com/package/mountainfyi-embed" target="_blank" rel="noopener" class="hover:underline" style="color:#57534E">mountainfyi-embed</a></td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-xs font-medium text-slate-900 dark:text-white">QuakeFYI</td><td class="px-4 py-3 text-xs"><a href="https://quakefyi.com" target="_blank" rel="noopener" class="hover:underline" style="color:#DC2626">quakefyi.com</a></td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">20,702 earthquakes, magnitude scale, USGS alerts</td><td class="px-4 py-3 text-xs font-mono"><a href="https://www.npmjs.com/package/quakefyi-embed" target="_blank" rel="noopener" class="hover:underline" style="color:#DC2626">quakefyi-embed</a></td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-xs font-medium text-slate-900 dark:text-white">ZipFYI</td><td class="px-4 py-3 text-xs"><a href="https://zipfyi.com" target="_blank" rel="noopener" class="hover:underline" style="color:#EA580C">zipfyi.com</a></td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">41,488 postal codes, demographics, median income</td><td class="px-4 py-3 text-xs font-mono"><a href="https://www.npmjs.com/package/zipfyi-embed" target="_blank" rel="noopener" class="hover:underline" style="color:#EA580C">zipfyi-embed</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FYIPEDIA ECOSYSTEM -->
+  <section id="ecosystem" class="py-16 sm:py-20 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">FYIPedia Developer Tools</h2>
+        <p class="text-slate-600 dark:text-slate-400">Open-source embed widgets across the <a href="https://fyipedia.com" target="_blank" rel="noopener" class="hover:underline font-medium" style="color:#EA580C">FYIPedia</a> ecosystem.</p>
+      </div>
+      <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 dark:bg-slate-800">
+            <tr>
+              <th class="px-4 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 text-xs">Family</th>
+              <th class="px-4 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 text-xs">Packages</th>
+              <th class="px-4 py-3 text-left font-semibold text-slate-700 dark:text-slate-300 text-xs">Focus</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-xs font-medium text-slate-900 dark:text-white">Geo FYI</td><td class="px-4 py-3 text-xs font-mono text-slate-600 dark:text-slate-400">distancefyi/mountainfyi/quakefyi/zipfyi-embed</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Cities, mountains, earthquakes, postal codes</td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-xs font-medium text-slate-900 dark:text-white">Transport FYI</td><td class="px-4 py-3 text-xs font-mono text-slate-600 dark:text-slate-400">airportfyi/airlinefyi/planefyi/trainfyi-embed</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Airports, airlines, aircraft, train stations</td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-xs font-medium text-slate-900 dark:text-white">Health FYI</td><td class="px-4 py-3 text-xs font-mono text-slate-600 dark:text-slate-400">anatomyfyi/pillfyi/drugfyi/nutrifyi-embed</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Anatomy, drugs, pills, nutrition data</td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-xs font-medium text-slate-900 dark:text-white">Network FYI</td><td class="px-4 py-3 text-xs font-mono text-slate-600 dark:text-slate-400">cablefyi/ipfyi/statuscodefyi-embed</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Cables, IP networks, HTTP status codes</td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-xs font-medium text-slate-900 dark:text-white">Science FYI</td><td class="px-4 py-3 text-xs font-mono text-slate-600 dark:text-slate-400">chemfyi/alloyfyi/gemfyi/starfyi/mineralfyi-embed</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Chemistry, alloys, gems, stars, minerals</td></tr>
+            <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50"><td class="px-4 py-3 text-xs font-medium text-slate-900 dark:text-white">Creative FYI</td><td class="px-4 py-3 text-xs font-mono text-slate-600 dark:text-slate-400">colorfyi/emojifyi/fontfyi/symbolfyi/unicodefyi-embed</td><td class="px-4 py-3 text-xs text-slate-600 dark:text-slate-400">Colors, emojis, fonts, symbols, unicode</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid sm:grid-cols-3 gap-8 mb-8">
+        <div>
+          <div class="font-bold text-white mb-3 font-mono" style="color:#EA580C">ZipFYI Embed</div>
+          <p class="text-sm text-slate-500">Geographic data widgets for any website. Zero dependencies, Shadow DOM, 4 themes.</p>
+        </div>
+        <div>
+          <div class="font-semibold text-white mb-3 text-sm">Links</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="https://zipfyi.com" target="_blank" rel="noopener" class="hover:text-white transition-colors">ZipFYI</a></li>
+            <li><a href="https://github.com/fyipedia/zipfyi-embed" target="_blank" rel="noopener" class="hover:text-white transition-colors">GitHub</a></li>
+            <li><a href="https://www.npmjs.com/package/zipfyi-embed" target="_blank" rel="noopener" class="hover:text-white transition-colors">npm</a></li>
+            <li><a href="https://fyipedia.com" target="_blank" rel="noopener" class="hover:text-white transition-colors">FYIPedia</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="font-semibold text-white mb-3 text-sm">Geo FYI Family</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="https://distancefyi.com" target="_blank" rel="noopener" class="hover:text-white transition-colors">DistanceFYI</a></li>
+            <li><a href="https://mountainfyi.com" target="_blank" rel="noopener" class="hover:text-white transition-colors">MountainFYI</a></li>
+            <li><a href="https://quakefyi.com" target="_blank" rel="noopener" class="hover:text-white transition-colors">QuakeFYI</a></li>
+            <li><a href="https://zipfyi.com" target="_blank" rel="noopener" class="hover:text-white transition-colors">ZipFYI</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-xs text-slate-600">&copy; 2025 FYIPedia. MIT License. Data from authoritative geographic sources.</p>
+        <button x-data="{ dark: document.documentElement.classList.contains('dark') }"
+                @click="dark = !dark; localStorage.setItem('theme', dark ? 'dark' : 'light'); document.documentElement.classList.toggle('dark', dark)"
+                class="flex items-center gap-2 text-xs text-slate-500 hover:text-slate-300 transition-colors">
+          <svg x-show="!dark" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg x-show="dark" x-cloak class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <span x-text="dark ? 'Light mode' : 'Dark mode'"></span>
+        </button>
+      </div>
+    </div>
+  </footer>
+
 </body>
 </html>
