@@ -1,0 +1,41 @@
+{
+  "name": "zipfyi-embed",
+  "version": "1.0.0",
+  "description": "Embed ZipFYI widgets — postal code cards, demographics, glossary. 41,488 ZIP codes. Zero dependencies, Shadow DOM, 4 themes.",
+  "main": "dist/embed.min.js",
+  "module": "dist/embed.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "zip-code",
+    "postal-code",
+    "demographics",
+    "income",
+    "area-code",
+    "embed",
+    "widget",
+    "zipfyi",
+    "zipfyi.com",
+    "shadow-dom",
+    "zero-dependencies",
+    "fyipedia",
+    "geofyi"
+  ],
+  "homepage": "https://widget.zipfyi.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fyipedia/zipfyi-embed"
+  },
+  "bugs": {
+    "url": "https://github.com/fyipedia/zipfyi-embed/issues"
+  },
+  "license": "MIT",
+  "author": "FYIPedia <dev@fyipedia.com>",
+  "publishConfig": {
+    "access": "public"
+  }
+}
