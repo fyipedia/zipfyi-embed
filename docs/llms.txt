@@ -1,21 +1,50 @@
 # ZipFYI Embed Widget
 
-> Embeddable ZipFYI widgets for any website. Zero dependencies, Shadow DOM isolation, 4 themes (light/dark/sepia/auto).
+> ZIP/postal codes, geocoding. Embeddable widgets for any website. Zero dependencies, Shadow DOM isolation.
 
 ## Quick Start
 
-Add to any HTML page:
-- Script: <script src="https://cdn.jsdelivr.net/npm/zipfyi-embed@1/dist/embed.min.js"></script>
+```html
+<script src="https://cdn.jsdelivr.net/npm/zipfyi-embed@1/dist/embed.min.js"></script>
+<div data-zipfyi="entity" data-slug="example"></div>
+```
+
+## Available Widget Types (6)
+
+- entity: `data-zipfyi="entity"`
+- glossary: `data-zipfyi="glossary"`
+- guide: `data-zipfyi="guide"`
+- compare: `data-zipfyi="compare"`
+- search: `data-zipfyi="search"`
+- faq: `data-zipfyi="faq"`
+
+## Customization
+
+- **Themes**: light, dark, sepia, auto (follows system preference)
+- **Sizes**: compact (280px), default (420px), large (720px)
+- **Styles**: modern, classic
+
+```html
+<div data-zipfyi="entity" data-slug="example"
+     data-theme="auto" data-size="compact" data-style-variant="modern"></div>
+```
+
+## Integration Methods
+
+1. **Script tag** (recommended): `<script src="https://cdn.jsdelivr.net/npm/zipfyi-embed@1/dist/embed.min.js"></script>`
+2. **iframe**: `https://zipfyi.com/iframe/entity/{slug}/`
+3. **oEmbed**: `https://zipfyi.com/oembed?url={page_url}&format=json`
+4. **Badge**: `https://zipfyi.com/badge/site.svg`
 
 ## Links
 
 - Main site: https://zipfyi.com
 - Widget docs: https://widget.zipfyi.com
-- npm: https://www.npmjs.com/package/zipfyi-embed
+- API documentation: https://zipfyi.com/developers/
+- npm package: https://www.npmjs.com/package/zipfyi-embed
 - GitHub: https://github.com/fyipedia/zipfyi-embed
-- API: https://zipfyi.com/developers/
 
-## Geo FYI Widget Family
+## Geo FYI Widget Network
 
 - [DistanceFYI Widget](https://widget.distancefyi.com)
 - [MountainFYI Widget](https://widget.mountainfyi.com)
