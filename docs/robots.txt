@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# ZipFYI Embed Widget
+# Main site: https://zipfyi.com
+# Widget docs: https://widget.zipfyi.com
+# npm: https://www.npmjs.com/package/zipfyi-embed
